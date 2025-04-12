@@ -33,7 +33,7 @@ class BaseEngine(ABC):
     async def run(self, *args: Any, **kwargs: Any) -> Iterable[Result | Exception]: ...
 
     @staticmethod
-    def _create_instance(module_path: str, class_name: str) -> BaseAlgorithm:
+    def _create_instance(module_path: str, class_name: str, **kwargs: Any) -> BaseAlgorithm:
         module_path: str = (
             module_path.replace("/", ".")
             .replace("\\", ".")
@@ -41,4 +41,4 @@ class BaseEngine(ABC):
         )
         module: types.ModuleType = importlib.import_module(module_path)
         attribute: ABCMeta = getattr(module, class_name)
-        return attribute()
+        return attribute(**kwargs)

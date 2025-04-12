@@ -1,7 +1,7 @@
 import asyncio
 import json
 import os
-from typing import Any, Callable, Dict, Iterable, Iterator, List, Tuple
+from typing import Any, Callable, Coroutine, Dict, Iterable, Iterator, List, Tuple
 
 import pytest
 
@@ -30,7 +30,7 @@ class DefaultEngine(BaseEngine):
                 self._algorithms.append(algorithm)
 
     async def run(self, *args: Any, **kwargs: Any) -> Dict[str, Result | Exception]:
-        tasks: Iterable = [algorithm(args, kwargs) for algorithm in self._algorithms]
+        tasks: Iterable[Coroutine] = [algorithm(args, kwargs) for algorithm in self._algorithms]
         results: Iterable[Result | Exception] = await asyncio.gather(*tasks, return_exceptions=True)
 
         report: dict = {}
