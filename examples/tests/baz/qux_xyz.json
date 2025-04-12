@@ -1,0 +1,16 @@
+[
+  {
+    "argument": "arg",
+    "input": {"k": "v"},
+    "expected_result": {
+      "status": true
+    }
+  },
+    {
+    "argument": "arg",
+    "input": null,
+    "expected_result": {
+      "status": false
+    }
+  }
+]
