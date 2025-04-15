@@ -35,7 +35,7 @@ jobs:
       run: poetry install --no-interaction --no-root --with dev
 
     - name: Codestyle checks
-      run: poetry run ruff check --exclude venv . && black --check --exclude venv .
+      run: poetry run ruff check --exclude venv . && poetry run black --check --exclude venv .
 
     - name: Tests
       run: poetry run pytest
