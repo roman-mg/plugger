@@ -1,0 +1,30 @@
+[project]
+name = "plugger"
+version = "0.1.0"
+description = "Modular runtime injector and test launcher"
+authors = [
+    {name = "RMN",email = "<no-reply>@mail.com"}
+]
+license = {text = "MIT License"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pytest-asyncio = "^0.26.0"
+ruff = "^0.11.5"
+black = "^25.1.0"
+poethepoet = "^0.33.1"
+mypy = "^1.15.0"
+
+[tool.poe.tasks]
+check = "ruff check --exclude venv . && black --check --exclude venv ."
+hard_check = "ruff check --exclude venv . && black --check --exclude venv . && mypy --exclude venv . && pytest"
+format = "ruff format --exclude venv . && black --exclude venv ."
+test = "pytest"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

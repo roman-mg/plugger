@@ -24,14 +24,22 @@ class DefaultEngine(BaseEngine):
             module_path: str = os.path.join(base_path, module_name)
             if os.path.isdir(module_path):
                 self.plug_in(module_path, *args, **kwargs)
-            elif os.path.isfile(module_path) and module_name.endswith(self._module_extension):
+            elif os.path.isfile(module_path) and module_name.endswith(
+                self._module_extension
+            ):
                 class_name: str = self._get_class_name(module_name)
-                algorithm: BaseAlgorithm = self._create_instance(module_path, class_name)
+                algorithm: BaseAlgorithm = self._create_instance(
+                    module_path, class_name
+                )
                 self._algorithms.append(algorithm)
 
     async def run(self, *args: Any, **kwargs: Any) -> Dict[str, Result | Exception]:
-        tasks: Iterable[Coroutine] = [algorithm(args, kwargs) for algorithm in self._algorithms]
-        results: Iterable[Result | Exception] = await asyncio.gather(*tasks, return_exceptions=True)
+        tasks: Iterable[Coroutine] = [
+            algorithm(args, kwargs) for algorithm in self._algorithms
+        ]
+        results: Iterable[Result | Exception] = await asyncio.gather(
+            *tasks, return_exceptions=True
+        )
 
         report: dict = {}
         for algorithm, result in zip(self._algorithms, results):
@@ -68,25 +76,31 @@ class PyTestJsonEngine(DefaultEngine):
                 continue
 
             module_path: str = os.path.join(base_path, module_name)
-            tests_name: str = module_name.replace(self._module_extension, self._tests_extension)
+            tests_name: str = module_name.replace(
+                self._module_extension, self._tests_extension
+            )
             tests_path: str = os.path.join(base_tests_path, tests_name)
             if os.path.isdir(module_path) and os.path.isdir(tests_path):
                 self.plug_in(base_path=module_path, base_tests_path=tests_path, *args)
             elif (
-                    os.path.isfile(module_path)
-                    and module_name.endswith(self._module_extension)
-                    and os.path.isfile(tests_path)
-                    and tests_path.endswith(self._tests_extension)
+                os.path.isfile(module_path)
+                and module_name.endswith(self._module_extension)
+                and os.path.isfile(tests_path)
+                and tests_path.endswith(self._tests_extension)
             ):
                 class_name: str = self._get_class_name(module_name)
-                algorithm: BaseAlgorithm = self._create_instance(module_path, class_name)
+                algorithm: BaseAlgorithm = self._create_instance(
+                    module_path, class_name
+                )
                 test_cases: Iterable[dict] = self._load_test_cases(tests_path)
 
                 self._algorithms.append((algorithm, test_cases))
 
     def run(self, *args: Any, **kwargs: Any) -> Iterator[Callable]:
         for algorithm, test_cases in self._algorithms:
-            test_function: Callable = self._generate_test_function(algorithm, test_cases)
+            test_function: Callable = self._generate_test_function(
+                algorithm, test_cases
+            )
             yield test_function
 
     @staticmethod
@@ -94,7 +108,9 @@ class PyTestJsonEngine(DefaultEngine):
         with open(path) as file:
             return json.load(file)
 
-    def _generate_test_function(self, algorithm: BaseAlgorithm, test_cases: Iterable[dict]) -> Callable:
+    def _generate_test_function(
+        self, algorithm: BaseAlgorithm, test_cases: Iterable[dict]
+    ) -> Callable:
         @pytest.mark.parametrize("params", test_cases)
         @pytest.mark.asyncio
         async def test_function(params: dict) -> None:
@@ -109,7 +125,5 @@ class PyTestJsonEngine(DefaultEngine):
 
     @staticmethod
     def _mock(params: dict) -> Tuple[dict, dict]:
-        input_arguments = {
-            params.get("argument", ""): params.get("input")
-        }
+        input_arguments = {params.get("argument", ""): params.get("input")}
         return input_arguments, params.get("expected_result", {})
