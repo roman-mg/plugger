@@ -12,9 +12,14 @@ readme = "README.md"
 packages = [{ include = "plugger" }]
 
 [tool.poe.tasks]
-check = "poetry run ruff check ./ && poetry run black --check ./"
-hard_check = "poetry run ruff check ./ && poetry run black --check ./ && poetry run mypy --config-file pyproject.toml ./"
-format = "poetry run ruff format ./ && poetry run black --config pyproject.toml ./"
+ruff-check = "poetry run ruff check ./"
+black-check = "poetry run black --check ./"
+mypy-check = "poetry run mypy --config-file pyproject.toml ./"
+check = ["ruff-check", "black-check"]
+hard-check = ["check", "mypy-check"]
+ruff-format = "poetry run ruff format ./"
+black-format = "poetry run black --config pyproject.toml ./"
+format = ["ruff-format", "black-format"]
 test = "poetry run pytest"
 
 [tool.poetry.dependencies]
