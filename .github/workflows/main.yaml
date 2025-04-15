@@ -1,4 +1,4 @@
-name: Build & Test
+name: CI Main
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
       run: poetry install --no-interaction --no-root --with dev
 
     - name: Codestyle checks
-      run: ruff check --exclude venv . && black --check --exclude venv .
+      run: poetry run ruff check --exclude venv . && black --check --exclude venv .
 
     - name: Tests
-      run: pytest
+      run: poetry run pytest
