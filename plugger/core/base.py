@@ -2,7 +2,7 @@ import importlib
 import types
 from abc import ABC, ABCMeta, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Optional
+from typing import Any, Iterable, List, Optional, Sequence
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,7 +16,7 @@ class BaseAlgorithm(ABC):
         self._id: str = self.__class__.__module__
 
     @abstractmethod
-    async def __call__(self, *args: Any, **kwargs: Any) -> Result | Iterable[Result]: ...
+    async def __call__(self, *args: Any, **kwargs: Any) -> Result | Sequence[Result]: ...
 
     def get_id(self) -> str:
         return self._id
@@ -30,7 +30,7 @@ class BaseEngine(ABC):
     def plug_in(self, base_path: str, *args: Any, **kwargs: Any) -> None: ...
 
     @abstractmethod
-    async def run(self, *args: Any, **kwargs: Any) -> Iterable[Result | Exception]: ...
+    async def run(self, *args: Any, **kwargs: Any) -> Iterable[Result | Sequence[Result] | Exception]: ...
 
     @staticmethod
     def _create_instance(module_path: str, class_name: str, **kwargs: Any) -> BaseAlgorithm:

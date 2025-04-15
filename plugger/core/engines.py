@@ -1,7 +1,18 @@
 import asyncio
 import json
 import os
-from typing import Any, Callable, Coroutine, Dict, Iterable, Iterator, List, Tuple
+from typing import (
+    Any,
+    Callable,
+    Coroutine,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Tuple,
+    Sequence,
+    override,
+)
 
 import pytest
 
@@ -13,6 +24,7 @@ class DefaultEngine(BaseEngine):
         super().__init__()
         self._module_extension = ".py"
 
+    @override
     def plug_in(self, base_path: str, *args: Any, **kwargs: Any) -> None:
         if not base_path:
             return
@@ -29,7 +41,8 @@ class DefaultEngine(BaseEngine):
                 algorithm: BaseAlgorithm = self._create_instance(module_path, class_name)
                 self._algorithms.append(algorithm)
 
-    async def run(self, *args: Any, **kwargs: Any) -> Dict[str, Result | Exception]:
+    @override
+    async def run(self, *args: Any, **kwargs: Any) -> Dict[str, Result | Sequence[Result] | Exception]:  # type: ignore
         tasks: Iterable[Coroutine] = [algorithm(args, kwargs) for algorithm in self._algorithms]
         results: Iterable[Result | Exception] = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -55,11 +68,11 @@ class DefaultEngine(BaseEngine):
 class PyTestJsonEngine(DefaultEngine):
     def __init__(self) -> None:
         super().__init__()
-        self._algorithms: List[Tuple[BaseAlgorithm, Iterable[dict]]] = []
+        self._algorithms: List[Tuple[BaseAlgorithm, Iterable[dict]]] = []  # type: ignore
         self._tests_extension: str = ".json"
 
     def plug_in(self, base_path: str, *args: Any, **kwargs: Any) -> None:
-        base_tests_path: str = kwargs.get("base_tests_path")
+        base_tests_path: str = kwargs.get("base_tests_path")  # type: ignore
         if not base_path or not base_tests_path:
             return
 
@@ -71,7 +84,7 @@ class PyTestJsonEngine(DefaultEngine):
             tests_name: str = module_name.replace(self._module_extension, self._tests_extension)
             tests_path: str = os.path.join(base_tests_path, tests_name)
             if os.path.isdir(module_path) and os.path.isdir(tests_path):
-                self.plug_in(base_path=module_path, base_tests_path=tests_path, *args)
+                self.plug_in(base_path=module_path, base_tests_path=tests_path)
             elif (
                 os.path.isfile(module_path)
                 and module_name.endswith(self._module_extension)
@@ -84,7 +97,7 @@ class PyTestJsonEngine(DefaultEngine):
 
                 self._algorithms.append((algorithm, test_cases))
 
-    def run(self, *args: Any, **kwargs: Any) -> Iterator[Callable]:
+    def run(self, *args: Any, **kwargs: Any) -> Iterator[Callable]:  # type: ignore
         for algorithm, test_cases in self._algorithms:
             test_function: Callable = self._generate_test_function(algorithm, test_cases)
             yield test_function
@@ -100,9 +113,15 @@ class PyTestJsonEngine(DefaultEngine):
         async def test_function(params: dict) -> None:
             input_arguments, expected_result = self._mock(params)
 
-            result: Result = await algorithm(**input_arguments)
+            result: Result | Sequence[Result] = await algorithm(**input_arguments)
 
-            assert result.status == expected_result.get("status")
+            index = expected_result.get("index")
+            if index is not None and isinstance(result, Sequence):
+                assert result[index].status == expected_result.get("status")
+            elif index is None and isinstance(result, Result):
+                assert result.status == expected_result.get("status")
+            else:
+                raise AssertionError("Test inconsistency.")
 
         test_function.__name__ = f"test_{algorithm.get_id()}"
         return test_function

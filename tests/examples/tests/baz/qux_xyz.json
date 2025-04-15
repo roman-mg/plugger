@@ -3,14 +3,16 @@
     "argument": "arg",
     "input": {"k": "v"},
     "expected_result": {
-      "status": true
+      "status": true,
+      "index": 0
     }
   },
     {
     "argument": "arg",
     "input": null,
     "expected_result": {
-      "status": false
+      "status": false,
+      "index": 0
     }
   }
 ]
