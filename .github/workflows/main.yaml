@@ -35,7 +35,7 @@ jobs:
       run: poetry install --no-interaction --with dev
 
     - name: Codestyle checks
-      run: poetry run poe check
+      run: poetry run poe hard-check
 
     - name: Tests
       run: poetry run poe test
