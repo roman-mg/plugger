@@ -1,9 +1,11 @@
-from core.engines import PyTestJsonEngine
+import os
+
+from plugger.core.engines import PyTestJsonEngine
 
 
 def register_tests() -> None:
-    algorithms_path = "examples/algorithms"
-    tests_path = "examples/tests"
+    algorithms_path = os.path.join("plugger", "examples", "algorithms")
+    tests_path = os.path.join("tests", "examples", "tests")
 
     pytest_engine = PyTestJsonEngine()
     pytest_engine.plug_in(base_path=algorithms_path, base_tests_path=tests_path)

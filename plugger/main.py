@@ -1,6 +1,6 @@
 import asyncio
 
-from core.engines import DefaultEngine
+from plugger.core.engines import DefaultEngine
 
 
 async def main() -> None:

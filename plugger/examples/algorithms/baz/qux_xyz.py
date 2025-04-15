@@ -1,4 +1,4 @@
-from core.base import BaseAlgorithm, Result
+from plugger.core.base import BaseAlgorithm, Result
 
 
 class QuxXyz(BaseAlgorithm):

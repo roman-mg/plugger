@@ -16,9 +16,7 @@ class BaseAlgorithm(ABC):
         self._id: str = self.__class__.__module__
 
     @abstractmethod
-    async def __call__(
-        self, *args: Any, **kwargs: Any
-    ) -> Result | Iterable[Result]: ...
+    async def __call__(self, *args: Any, **kwargs: Any) -> Result | Iterable[Result]: ...
 
     def get_id(self) -> str:
         return self._id
@@ -35,12 +33,8 @@ class BaseEngine(ABC):
     async def run(self, *args: Any, **kwargs: Any) -> Iterable[Result | Exception]: ...
 
     @staticmethod
-    def _create_instance(
-        module_path: str, class_name: str, **kwargs: Any
-    ) -> BaseAlgorithm:
-        import_module_path: str = (
-            module_path.replace("/", ".").replace("\\", ".").replace(".py", "")
-        )
+    def _create_instance(module_path: str, class_name: str, **kwargs: Any) -> BaseAlgorithm:
+        import_module_path: str = module_path.replace("/", ".").replace("\\", ".").replace(".py", "")
         module: types.ModuleType = importlib.import_module(import_module_path)
         attribute: ABCMeta = getattr(module, class_name)
         return attribute(**kwargs)

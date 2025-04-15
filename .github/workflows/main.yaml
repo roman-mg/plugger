@@ -32,10 +32,10 @@ jobs:
           ${{ runner.os }}-poetry-
 
     - name: Install dependencies
-      run: poetry install --no-interaction --no-root --with dev
+      run: poetry install --no-interaction --with dev
 
     - name: Codestyle checks
-      run: poetry run ruff check --exclude venv . && poetry run black --check --exclude venv .
+      run: poetry run poe check
 
     - name: Tests
-      run: poetry run pytest
+      run: poetry run poe test
