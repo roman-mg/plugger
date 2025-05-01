@@ -2,12 +2,13 @@ import asyncio
 import json
 import os
 from collections.abc import (
+    Callable,
     Coroutine,
     Iterable,
     Iterator,
     Sequence,
 )
-from typing import Any, Callable, override
+from typing import Any, override
 
 import pytest
 
@@ -42,7 +43,7 @@ class DefaultEngine(BaseEngine):
         results: Iterable[Result | Exception] = await asyncio.gather(*tasks, return_exceptions=True)
 
         report: dict = {}
-        for algorithm, result in zip(self._algorithms, results):
+        for algorithm, result in zip(self._algorithms, results, strict=True):
             report[algorithm.get_id()] = result
 
         return report

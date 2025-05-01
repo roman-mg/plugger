@@ -3,13 +3,13 @@ import types
 from abc import ABC, ABCMeta, abstractmethod
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass(frozen=True, slots=True)
 class Result:
     status: bool
-    metadata: Optional[Any] = None
+    metadata: Any | None = None
 
 
 class BaseAlgorithm(ABC):
