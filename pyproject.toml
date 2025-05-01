@@ -12,28 +12,31 @@ readme = "README.md"
 packages = [{ include = "plugger" }]
 
 [tool.poe.tasks]
-ruff-check = "poetry run ruff --config pyproject.toml check ./"
 black-check = "poetry run black --check --config pyproject.toml ./"
+isort-check = "poetry run isort --check-only --settings pyproject.toml ./"
+ruff-check = "poetry run ruff --config pyproject.toml check ./"
 mypy-check = "poetry run mypy --config-file pyproject.toml ./"
-ruff-format = "poetry run ruff --config pyproject.toml format ./"
 black-format = "poetry run black --config pyproject.toml ./"
-check = ["ruff-check", "black-check"]
+isort-format = "poetry run isort --settings pyproject.toml ./"
+ruff-format = "poetry run ruff --config pyproject.toml format ./"
+check = ["black-check", "isort-check", "ruff-check"]
 hard-check = ["check", "mypy-check"]
-format = ["ruff-format", "black-format"]
+format = ["black-format", "isort-format", "ruff-format"]
 test = "poetry run pytest -c pyproject.toml --cov-report=html tests/"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 
 [tool.poetry.group.dev.dependencies]
+poethepoet = "^0.33.1"
 pytest = "^8.3.5"
 pytest-asyncio = "^0.26.0"
 pytest-env = "^1.1.5"
 pytest-html = "^4.1.1"
 pytest-cov = "^4.1.0"
-ruff = "^0.11.5"
 black = "^25.1.0"
-poethepoet = "^0.33.1"
+isort = "^6.0.1"
+ruff = "^0.11.5"
 mypy = "^1.15.0"
 
 [tool.black]
@@ -53,6 +56,15 @@ exclude = '''
     | venv
 )/
 '''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+known_first_party = ["plugger"]
 
 [tool.ruff]
 target-version = "py312"
