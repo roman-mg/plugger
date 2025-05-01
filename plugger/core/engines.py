@@ -1,18 +1,13 @@
 import asyncio
 import json
 import os
-from typing import (
-    Any,
-    Callable,
+from collections.abc import (
     Coroutine,
-    Dict,
     Iterable,
     Iterator,
-    List,
-    Tuple,
     Sequence,
-    override,
 )
+from typing import Any, Callable, override
 
 import pytest
 
@@ -42,7 +37,7 @@ class DefaultEngine(BaseEngine):
                 self._algorithms.append(algorithm)
 
     @override
-    async def run(self, *args: Any, **kwargs: Any) -> Dict[str, Result | Sequence[Result] | Exception]:  # type: ignore
+    async def run(self, *args: Any, **kwargs: Any) -> dict[str, Result | Sequence[Result] | Exception]:  # type: ignore
         tasks: Iterable[Coroutine] = [algorithm(args, kwargs) for algorithm in self._algorithms]
         results: Iterable[Result | Exception] = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -68,7 +63,7 @@ class DefaultEngine(BaseEngine):
 class PyTestJsonEngine(DefaultEngine):
     def __init__(self) -> None:
         super().__init__()
-        self._algorithms: List[Tuple[BaseAlgorithm, Iterable[dict]]] = []  # type: ignore
+        self._algorithms: list[tuple[BaseAlgorithm, Iterable[dict]]] = []  # type: ignore
         self._tests_extension: str = ".json"
 
     def plug_in(self, base_path: str, *args: Any, **kwargs: Any) -> None:
@@ -127,6 +122,6 @@ class PyTestJsonEngine(DefaultEngine):
         return test_function
 
     @staticmethod
-    def _mock(params: dict) -> Tuple[dict, dict]:
+    def _mock(params: dict) -> tuple[dict, dict]:
         input_arguments = {params.get("argument", ""): params.get("input")}
         return input_arguments, params.get("expected_result", {})

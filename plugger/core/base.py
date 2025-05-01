@@ -1,8 +1,9 @@
 import importlib
 import types
 from abc import ABC, ABCMeta, abstractmethod
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Optional, Sequence
+from typing import Any, Optional
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,7 +25,7 @@ class BaseAlgorithm(ABC):
 
 class BaseEngine(ABC):
     def __init__(self) -> None:
-        self._algorithms: List[BaseAlgorithm] = []
+        self._algorithms: list[BaseAlgorithm] = []
 
     @abstractmethod
     def plug_in(self, base_path: str, *args: Any, **kwargs: Any) -> None: ...
