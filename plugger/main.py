@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from plugger.core.engines import DefaultEngine
 
@@ -9,7 +10,7 @@ async def main() -> None:
     engine = DefaultEngine()
     engine.plug_in(algorithms_path)
     results = await engine.run()
-    print(results)
+    logging.info(results)
 
 
 if __name__ == "__main__":

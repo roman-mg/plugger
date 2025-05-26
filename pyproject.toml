@@ -70,15 +70,22 @@ known_first_party = ["plugger"]
 target-version = "py312"
 line-length = 120
 lint.select = [
+    "A", # flake8-builtins
+    "B", # flake8-bugbear
+    "C", # flake8-comprehensions
     "E", # pycodestyle errors
-    "W", # pycodestyle warnings
     "F", # pyflakes
     "I", # isort
-    "C", # flake8-comprehensions
-    "B", # flake8-bugbear
-    "UP", # pyupgrade
+    "N", # pep8-naming
+    "Q", # flake8-quotes
+    "W", # pycodestyle warnings
     "ANN", # flake8-annotations
-    "F401", # remove unused imports
+    "F401", # unused-import
+    "RET", # flake8-return
+    "SIM", # flake8-simplify
+    "TID", # flake8-tidy-imports
+    "T20", # flake8-print
+    "UP", # pyupgrade
 ]
 lint.ignore = [
     "E501", # line too long, handled by black
