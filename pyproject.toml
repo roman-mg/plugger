@@ -78,6 +78,7 @@ lint.select = [
     "B", # flake8-bugbear
     "UP", # pyupgrade
     "ANN", # flake8-annotations
+    "F401", # remove unused imports
 ]
 lint.ignore = [
     "E501", # line too long, handled by black
